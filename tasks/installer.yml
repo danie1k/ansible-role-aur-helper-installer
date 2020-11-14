@@ -1,0 +1,43 @@
+---
+
+- name: "Check if '{{ item }}' is installed"
+  shell: 'command -v {{ item }} >/dev/null 2>&1'
+  register: _aur_helper_exists
+  ignore_errors: yes
+
+- name: 'Install {{ item }}'
+  block:
+    - name: Create temporary directory
+      tempfile: state=directory
+      register: tempdir
+
+    - name: Ensure dependencies are installed
+      become: yes
+      pacman:
+        name: '{{ _aur_helpers_dependencies + _aur_helpers_sources[item].dependencies }}'
+        state: present
+
+    - name: 'Clone {{ item }} repository'
+      git:
+        repo: '{{ _aur_helpers_sources[item].repo }}'
+        dest: '{{ tempdir.path }}'
+        version: '{{ _aur_helpers_sources[item].version }}'
+
+    - name: 'Build {{ item }} package'
+      shell: MAKEFLAGS="-j$(nproc)" && makepkg -fr
+      args:
+        chdir: '{{ tempdir.path }}'
+
+    - name: 'Install {{ item }} package'
+      become: true
+      shell: 'pacman --noconfirm -U "{{ tempdir.path }}/{{ item }}-"*.pkg.tar.*'
+
+  always:
+    - name: Remove temporary directory
+      become: true
+      file:
+        path: '{{ tempdir.path }}'
+        state: absent
+      when: tempdir.path is defined
+
+  when: _aur_helper_exists.rc != 0

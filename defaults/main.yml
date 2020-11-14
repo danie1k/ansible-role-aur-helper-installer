@@ -1,0 +1,5 @@
+---
+
+aur_helpers_to_install:
+  - pikaur
+  - yay

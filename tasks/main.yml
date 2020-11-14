@@ -1,0 +1,4 @@
+---
+
+- include_tasks: installer.yml
+  loop: '{{ aur_helpers_to_install }}'

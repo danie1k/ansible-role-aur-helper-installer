@@ -1,0 +1,19 @@
+---
+
+_aur_helpers_dependencies:
+  - base-devel
+  - git
+  - pacman
+_aur_helpers_sources:
+  pikaur:
+    repo: https://github.com/actionless/pikaur.git
+    version: '1.6.12'
+    dependencies: [pyalpm]
+  trizen:
+    repo: https://aur.archlinux.org/trizen.git
+    version: 'HEAD'
+    dependencies: [pacutils, perl, perl-data-dump, perl-json, perl-libwww, perl-lwp-protocol-https, perl-term-readline-gnu, perl-term-ui]
+  yay:
+    repo: https://aur.archlinux.org/yay-bin.git
+    version: 'HEAD'
+    dependencies: []
