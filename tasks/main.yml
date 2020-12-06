@@ -1,4 +1,9 @@
 ---
 
+- name: Install commonmark
+  become: true
+  pip: name=commonmark
+  when: "pikaur" in aur_helpers_to_install
+
 - include_tasks: installer.yml
   loop: '{{ aur_helpers_to_install }}'
